@@ -5,10 +5,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
-#include <time.h>  // For usleep function
+#include <time.h>
 #include "retval.h"
-
-// I will define some styling here:
 
 #define RESET_ALL "\033[0m"
 
@@ -44,25 +42,25 @@ void animate_intro() {
     size_t index = 0;
 
     while (index < len) {
-        printf(CLEAR_SCREEN);  // Clear the console
-        printf(GREEN BOLD);    // Set text color and style
+        printf(CLEAR_SCREEN);
+        printf(GREEN BOLD); 
 
         for (size_t i = 0; i < len; i++) {
             if (i == index) {
-                printf("%c", toupper(intro[i]));  // Uppercase the current character
+                printf("%c", toupper(intro[i]));
             } else {
                 printf("%c", intro[i]);
             }
         }
 
-        printf(RESET_ALL);  // Reset text attributes
-        fflush(stdout);     // Flush the output buffer
-        // Create a timespec structure for nanosleep
+        printf(RESET_ALL);    
+        fflush(stdout);         
+
         struct timespec req;
         req.tv_sec = 0;
-        req.tv_nsec = 100000000L;  // 100 milliseconds
-        nanosleep(&req, NULL);     // Sleep for the specified time
-        index++;            // Move to the next character
+        req.tv_nsec = 100000000L;  
+        nanosleep(&req, NULL);     
+        index++;            
     }
     printf("\n");
 }
@@ -124,7 +122,9 @@ int smoldb_new_input_buf(InputBuf **buf) {
   return SMOLDB_ALLOC_SUCCESS;
 }
 /**
- * @brief Helper function to read input and write to buffer. This function reallocates the buffer contained inside 
+ * @brief Helper function to read input and write to buffer.
+ *
+ * This function reallocates the buffer contained inside 
  * buf.
  * @param buf the buffer to pass in. If buffer is NULL, the function fails. If allocation fails, the function also
  * fails
@@ -138,12 +138,13 @@ static int smoldb_input_buf_read(InputBuf *buf, const char *input){
   size_t length = strlen(input);
   free(buf->buffer);
 
-  buf->buffer = (char*)malloc(sizeof(char)*(1 + length));
+  buf->buffer = (char*)malloc(sizeof(char)*(length));
   if (buf->buffer == NULL){
     perror(RED BOLD "Error allocating memory!\n" RESET_ALL);
     return SMOLDB_ALLOC_ERR;
   }
   strncpy(buf->buffer, input, length);
+  buf->buf_len = length;
   return SMOLDB_ALLOC_SUCCESS;
 }
 

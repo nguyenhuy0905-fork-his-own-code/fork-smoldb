@@ -40,19 +40,19 @@ SMOL_API int smoldb_new_input_buf(InputBuf **buf);
 SMOL_API int smoldb_free_input_buf(InputBuf **buf);
 
 /**
- * @brief Prototype to handle prompt, it will get what the user type in and change it into InputBuf
- * @param InputBuf* buf is a pointer point to the InputBuf, argc is the number of arguments, and args is
- * the list of the arguments. Such as when user runs the program like this: 
- * ./smoldb.exe run --> We will have 2 arguments, the former is ./smoldb.exe, and the latter is run.
- * Inside the function, I also have a supporting function named 
- * int smoldb_input_buf_read(InputBuf *buf, const char *input)
- * In this function, my main purpose is that whenever the user insert a new "input" string, the content
- * of the string will be assigned to the string buffer in InputBuf, and the length of the string will also 
- * be assigned to buf_len.
- * Inside the smoldb_input_buf_read function, I reallocate the memory space for InputBuf with the lenght of 
- * the input, and copy the content of the input string to the string buffer.
- * @return status of the prompt. If the user insert the proper input, the function will return 0, else it will
- * return 1.
+ * @brief Prototype to handle prompt. 
+ *
+ * @param InputBuf* buf 
+ * @param argc the number of arguments 
+ * @param args the list of the arguments. 
+ *
+ * The arguments argc and args are expected to be passed from main(). At least one
+ * command-line argument other than the executable is expected. If the user writes
+ * input, the function reallocates memory for buf's buffer string.
+ *
+ * @return If the user insert "mogging" when prompted, the function returns 0.
+ * If user does not provide any command-line argument, or the argument is "exit",
+ * the function returns 1.
 */
 SMOL_API int prompt_prototype(InputBuf *buf, int argc, char *args[]);
 
