@@ -83,9 +83,8 @@ int prompt_prototype(InputBuf *buf, int argc, char *args[]){
     while (true){
       printf(">>> ");
       char prompt_input[1000];
-      // Read the entire line
       if (fgets(prompt_input, sizeof(prompt_input), stdin) == NULL) {
-          break;  // Handle EOF if needed
+          break;  // EOF
       }
       // Remove the newline character at the end of the input
       size_t len = strlen(prompt_input);
