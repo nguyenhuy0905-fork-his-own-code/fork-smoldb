@@ -94,10 +94,10 @@ int prompt_prototype(InputBuf *buf, int argc, char *args[]){
       if (len > 0 && prompt_input[len - 1] == '\n') {
           prompt_input[len - 1] = '\0';
       }
-
-      if (strcmp(prompt_input, "") == 0) {
-          continue;  // If input is empty, display the prompt again
+      else if (len <= 0) {
+          continue;
       }
+
       smoldb_input_buf_read(buf, prompt_input);
       if (strcmp(prompt_input, "mogging") == 0){
         printf(YELLOW BOLD "Bro can rizz now!\n" RESET_ALL);
