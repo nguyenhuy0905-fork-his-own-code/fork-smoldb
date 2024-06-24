@@ -40,14 +40,14 @@ struct InputBuf {
 
 void animate_intro() {
     char intro[] = "Welcome to Mogwarts University!";
-    int len = strlen(intro);
-    int index = 0;
+    size_t len = strlen(intro);
+    size_t index = 0;
 
     while (index < len) {
         printf(CLEAR_SCREEN);  // Clear the console
         printf(GREEN BOLD);    // Set text color and style
 
-        for (int i = 0; i < len; i++) {
+        for (size_t i = 0; i < len; i++) {
             if (i == index) {
                 printf("%c", toupper(intro[i]));  // Uppercase the current character
             } else {
@@ -101,13 +101,11 @@ int prompt_prototype(InputBuf *buf, int argc, char *args[]){
       smoldb_input_buf_read(buf, prompt_input);
       if (strcmp(prompt_input, "mogging") == 0){
         printf(YELLOW BOLD "Bro can rizz now!\n" RESET_ALL);
-        exit(0);
         return 0;        
       }
     }
   }
   printf(BOLD "\nBro is NOT Jordan Barrett\n" RESET_ALL);
-  exit(1);
   return 1;
 }
 
@@ -137,8 +135,10 @@ static int smoldb_input_buf_read(InputBuf *buf, const char *input){
     perror(RED BOLD "Point to NULL\n" RESET_ALL);
     return SMOLDB_NULL_PTR_TO_REF_ERR;
   }
-  int length = strlen(input);
-  buf->buffer = realloc(buf->buffer, length + 1);
+  size_t length = strlen(input);
+  free(buf->buffer);
+
+  buf->buffer = (char*)malloc(sizeof(char)*(1 + length));
   if (buf->buffer == NULL){
     perror(RED BOLD "Error allocating memory!\n" RESET_ALL);
     return SMOLDB_ALLOC_ERR;
