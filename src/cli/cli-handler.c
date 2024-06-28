@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "retval.h"
-
 #define RESET_ALL "\033[0m"
 
 /* List of colors */
