@@ -15,10 +15,12 @@ typedef enum SMOL_ALLOC_RETVAL {
 
   /* The pointer to address is NULL,
    * NOTE: this won't happen to NULL pointer (void*) but only to null
-   * pointer-to-pointer (void**)
+   * pointer-to-pointer (void**), and only happens when a function asks
+   * for pointer-to-pointer
    *
    * */
   SMOLDB_NULL_PTR_TO_REF_ERR,
+  SMOLDB_NULL_PTR_ERR,
 } SMOLDB_ALLOC_RETVAL;
 
 /**

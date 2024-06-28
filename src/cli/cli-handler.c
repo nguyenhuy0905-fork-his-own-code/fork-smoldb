@@ -1,11 +1,10 @@
 #include "cli-handler.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <time.h>
+
 #include "retval.h"
 
 #define RESET_ALL "\033[0m"
@@ -28,83 +27,13 @@
 #define DIM "\033[2m"
 #define ITALIC "\033[3m"
 #define UNDERLINE "\033[4m"
-#define STRIKETHROUGH "\033[9m" 
+#define STRIKETHROUGH "\033[9m"
 #define CLEAR_SCREEN "\033[H\033[J"
 
 struct InputBuf {
   char *buffer;
   size_t buf_len;
 };
-
-void animate_intro() {
-    char intro[] = "Welcome to Mogwarts University!";
-    size_t len = strlen(intro);
-    size_t index = 0;
-
-    while (index < len) {
-        printf(CLEAR_SCREEN);
-        printf(GREEN BOLD); 
-
-        for (size_t i = 0; i < len; i++) {
-            if (i == index) {
-                printf("%c", toupper(intro[i]));
-            } else {
-                printf("%c", intro[i]);
-            }
-        }
-
-        printf(RESET_ALL);    
-        fflush(stdout);         
-
-        struct timespec req;
-        req.tv_sec = 0;
-        req.tv_nsec = 100000000L;  
-        nanosleep(&req, NULL);     
-        index++;            
-    }
-    printf("\n");
-}
-
-static int smoldb_input_buf_read(InputBuf *buf, const char *input);
-
-/**
- * @brief This function handle the input of user and create a prompt 
- * @param buf for buffer, argc = number of arguments, *args[] = array of arguments
- * @return status: 0 = success, 1 = failed
- */
-int prompt_prototype(InputBuf *buf, int argc, char *args[]){
-  if (buf == NULL){
-    perror(RED BOLD "Point to NULL\n" RESET_ALL);
-    return SMOLDB_NULL_PTR_TO_REF_ERR;
-  };
-  animate_intro();
-  printf(YELLOW BOLD "~~What do you want to learn to day?~~ \n" RESET_ALL);
-  if (argc == 2 && strcmp(args[1], "exit") != 0){
-    while (true){
-      printf(">>> ");
-      char prompt_input[1000];
-      if (fgets(prompt_input, sizeof(prompt_input), stdin) == NULL) {
-          break;  // EOF
-      }
-      // Remove the newline character at the end of the input
-      size_t len = strlen(prompt_input);
-      if (len > 0 && prompt_input[len - 1] == '\n') {
-          prompt_input[len - 1] = '\0';
-      }
-      else if (len <= 0) {
-          continue;
-      }
-
-      smoldb_input_buf_read(buf, prompt_input);
-      if (strcmp(prompt_input, "mogging") == 0){
-        printf(YELLOW BOLD "Bro can rizz now!\n" RESET_ALL);
-        return 0;        
-      }
-    }
-  }
-  printf(BOLD "\nBro is NOT Jordan Barrett\n" RESET_ALL);
-  return 1;
-}
 
 int smoldb_new_input_buf(InputBuf **buf) {
   if (buf == NULL) {
@@ -120,33 +49,6 @@ int smoldb_new_input_buf(InputBuf **buf) {
 
   return SMOLDB_ALLOC_SUCCESS;
 }
-/**
- * @brief Helper function to read input and write to buffer.
- *
- * This function reallocates the buffer contained inside 
- * buf.
- * @param buf the buffer to pass in. If buffer is NULL, the function fails. If allocation fails, the function also
- * fails
- * @return SMOLDB_ALLOC_SUCCESS if succeeded, SMOLDB_ALLOC_ERR if fail
- */
-static int smoldb_input_buf_read(InputBuf *buf, const char *input){
-  if (buf == NULL){
-    perror(RED BOLD "Point to NULL\n" RESET_ALL);
-    return SMOLDB_NULL_PTR_TO_REF_ERR;
-  }
-  size_t length = strlen(input);
-  free(buf->buffer);
-
-  buf->buffer = (char*)malloc(sizeof(char)*(length));
-  if (buf->buffer == NULL){
-    perror(RED BOLD "Error allocating memory!\n" RESET_ALL);
-    return SMOLDB_ALLOC_ERR;
-  }
-  strncpy(buf->buffer, input, length);
-  buf->buf_len = length;
-  return SMOLDB_ALLOC_SUCCESS;
-}
-
 
 int smoldb_free_input_buf(InputBuf **buf) {
   if (buf == NULL) {
@@ -157,6 +59,48 @@ int smoldb_free_input_buf(InputBuf **buf) {
   (*buf)->buffer = NULL;
   free((*buf));
   (*buf) = NULL;
+
+  return SMOLDB_ALLOC_SUCCESS;
+}
+
+/**
+ * @brief Reads the input from stdin and write into the input buffer passed in.
+ *
+ * NOTE: This operation reallocates the input buffer's inner string once.
+ *
+ * @return SMOLDB_ALLOC_SUCCESS (0) if nothing goes wrong, SMOLDB_NULL_PTR_ERR
+ * if buf is NULL, SMOLDB_ALLOC_ERR if memory reallocation fails.
+ */
+static int smoldb_get_input(InputBuf *buf) {
+  if (buf == NULL) {
+    return SMOLDB_NULL_PTR_ERR;
+  }
+  printf(">>> ");
+  ssize_t byteread = getline(&buf->buffer, &buf->buf_len, stdin);
+  if (byteread <= 0) {
+    return SMOLDB_ALLOC_ERR;
+  }
+  // ignore newline
+  buf->buf_len = -1 + byteread;
+  buf->buffer[byteread - 1] = '\0';
+  return SMOLDB_ALLOC_SUCCESS;
+}
+
+int smoldb_handle_input(InputBuf *buf) {
+  while (true) {
+    int retcode = smoldb_get_input(buf);
+    if (retcode) {
+      return retcode;
+    }
+
+    // FIXME: Placeholder only
+    if (buf->buf_len == strlen(".exit") && strcmp(buf->buffer, ".exit") == 0) {
+      printf(YELLOW "Exited!\n" RESET_ALL);
+      // HACK: technically there is an allocation in smoldb_get_input
+      return SMOLDB_ALLOC_SUCCESS;
+    }
+    printf(RED "Unknown command: " BOLD "%s\n" RESET_ALL, buf->buffer);
+  }
 
   return SMOLDB_ALLOC_SUCCESS;
 }

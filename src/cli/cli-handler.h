@@ -15,13 +15,16 @@ extern "C" {
 
 /**
  * @typedef InputBuf
- * @brief Holds information about user input or input from stdin
+ * @brief Holds information about user input or input from stdin. Basically a
+ * more convenient string.
  *
  */
 typedef struct InputBuf InputBuf;
 
 /**
  * @brief Allocate memory for a new input buffer
+ *
+ * NOTE: (*buf) can be NULL, but (**buf) can NOT be NULL.
  *
  * @param buf The pointer to the address of the input buffer to be allocated
  * memory
@@ -33,6 +36,8 @@ SMOL_API int smoldb_new_input_buf(InputBuf **buf);
  * @brief Free memory allocated to the input buffer specified, if any, and
  * points the pointer to NULL.
  *
+ * NOTE: (*buf) can be NULL, but (**buf) can NOT be NULL.
+ *
  * @param buf The pointer to the address of the input buffer to be freed
  * memory. After being freed, (*buf) = NULL.
  * @return 0 if successful or if buf is NULL (hence nothing to remove)
@@ -40,25 +45,15 @@ SMOL_API int smoldb_new_input_buf(InputBuf **buf);
 SMOL_API int smoldb_free_input_buf(InputBuf **buf);
 
 /**
- * @brief Prototype to handle prompt. 
+ * @brief Prompt and get user input
  *
- * @param InputBuf* buf 
- * @param argc the number of arguments 
- * @param args the list of the arguments. 
- *
- * The arguments argc and args are expected to be passed from main(). At least one
- * command-line argument other than the executable is expected. If the user writes
- * input, the function reallocates memory for buf's buffer string.
- *
- * @return If the user insert "mogging" when prompted, the function returns 0.
- * If user does not provide any command-line argument, or the argument is "exit",
- * the function returns 1.
-*/
-SMOL_API int prompt_prototype(InputBuf *buf, int argc, char *args[]);
+ * @param buf
+ * @return
+ */
+extern int smoldb_handle_input(InputBuf *buf);
 
 #ifdef __cplusplus
 }
 #endif  // __cplusplus
 
 #endif  // !SMOLDB_CLI_HANDLER_H
-
