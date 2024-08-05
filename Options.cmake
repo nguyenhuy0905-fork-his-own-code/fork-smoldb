@@ -90,7 +90,6 @@ endif()
 
 if(USE_LIBCXX)
     if(NOT MSVC)
-        target_compile_options(smoldb-compile-opts INTERFACE "-stdlib=libc++")
         target_link_options(smoldb-compile-opts INTERFACE
                             "-stdlib=libc++;-lc++abi")
     endif()
