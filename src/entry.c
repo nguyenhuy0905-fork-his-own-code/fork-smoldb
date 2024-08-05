@@ -11,6 +11,8 @@ int main(/*int argc, char *argv[]*/ void) {
     return EXIT_FAILURE;
   }
 
+  smoldb_handle_input(buf);
+
   smoldb_free_input_buf(&buf);
   return EXIT_SUCCESS;
 }
