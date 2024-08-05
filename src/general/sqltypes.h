@@ -1,0 +1,27 @@
+#ifndef SMOLDB_GENERAL_SQL_TYPE_H
+#define SMOLDB_GENERAL_SQL_TYPE_H
+
+#include <stdint.h>
+
+typedef enum : uint8_t {
+  SMOLDB_SQL_INT = 0,
+  SMOLDB_SQL_UINT,
+  SMOLDB_SQL_LONG,
+  SMOLDB_SQL_ULONG,
+  SMOLDB_SQL_SHORT,
+  SMOLDB_SQL_USHORT,
+  SMOLDB_SQL_VARCHAR,
+} SMOLDB_SQL_TYPE;
+
+// -1 means variable size
+constexpr int16_t SMOLDB_SQL_TYPE_SIZE[] = {
+    4, // SMOLDB_SQL_INT
+    4, // SMOLDB_SQL_UINT
+    8, // SMOLDB_SQL_LONG
+    8, // SMOLDB_SQL_ULONG
+    2, // SMOLDB_SQL_SHORT
+    2, // SMOLDB_SQL_USHORT
+    -1 // SMOLDB_SQL_VARCHAR
+};
+
+#endif // !SMOLDB_GENERAL_SQL_TYPE_H

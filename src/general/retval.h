@@ -1,12 +1,14 @@
 #ifndef SMOLDB_RETVAL_H
 #define SMOLDB_RETVAL_H
 
+#include "general.h"
+
 /**
  * @typedef SMOL_ALLOC_RETVAL
  * @brief Defines the return codes from functions that allocate memory
  *
  */
-typedef enum SMOL_ALLOC_RETVAL {
+SMOL_API typedef enum SMOL_ALLOC_RETVAL {
   /* Nothing special happened, and allocation was successful */
   SMOLDB_ALLOC_SUCCESS = 0,
 
@@ -26,9 +28,20 @@ typedef enum SMOL_ALLOC_RETVAL {
  * @brief Defines the return codes from functions that read user input
  *
  */
-typedef enum SMOL_INPUT_READ_RETVAL {
+SMOL_API typedef enum SMOL_INPUT_READ_RETVAL {
   SMOLDB_READ_SUCCESS = 0,
   SMOLDB_READ_ERR,
+  SMOLDB_READ_MORE,
 } SMOL_INPUT_READ_RETVAL;
+
+typedef enum SMOL_PARSE_STATE {
+  SMOLDB_PARSE_INITIAL,
+  SMOLDB_PARSE_ERR,
+  SMOLDB_PARSE_META, // .
+  SMOLDB_PARSE_SQL,
+  // metacommands
+  SMOLDB_PARSE_META_EXIT, // .exit
+  // TODO: add more metacommands
+} SMOL_PARSE_STATE; 
 
 #endif // !SMOLDB_RETVAL_H
